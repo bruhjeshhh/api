@@ -127,11 +127,22 @@ func ValidateFileAsArchive(formFile *multipart.FileHeader) (string, error) {
 }
 
 // case-insensitive version of strings.Contains
-func containsI(text string, substr string) bool {
-	return strings.Contains(
-		strings.ToLower(text),
-		strings.ToLower(substr),
-	)
+func ContainsBlacklistedWord(text string, blacklist []string) bool {
+	text = strings.ToLower(text)
+
+	for _, word := range blacklist {
+		word = strings.ToLower(word)
+
+		// check for whole words and not substrings
+		pattern := `\b` + regexp.QuoteMeta(word) + `\b`
+		re := regexp.MustCompile(pattern)
+
+		if re.MatchString(text) {
+			return true
+		}
+	}
+
+	return false
 }
 
 func IsUsernameBlacklisted(username string) bool {
@@ -146,10 +157,8 @@ func IsUsernameBlacklisted(username string) bool {
 	}
 
 	// check if contains
-	for _, word := range bl.Words {
-		if containsI(username, word) {
-			return true
-		}
+	if ContainsBlacklistedWord(username, bl.Words) {
+		return true
 	}
 
 	return false
@@ -159,10 +168,8 @@ func IsDisplayNameBlacklisted(displayName string) bool {
 	bl := Config.Blacklist
 
 	contains := append(bl.Words, bl.DisplayNames...)
-	for _, word := range contains {
-		if containsI(displayName, word) {
-			return true
-		}
+	if ContainsBlacklistedWord(displayName, contains) {
+		return true
 	}
 
 	return false

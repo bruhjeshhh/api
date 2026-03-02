@@ -274,16 +274,14 @@ func CreateRice(c *gin.Context) {
 	}
 
 	// check if title or description contains blacklisted words
-	for _, word := range utils.Config.Blacklist.Words {
-		if strings.Contains(strings.ToLower(metadata.Title), word) {
-			c.Error(blacklistedTitle)
-			return
-		}
-
-		if strings.Contains(strings.ToLower(metadata.Description), word) {
-			c.Error(blacklistedDescription)
-			return
-		}
+	bl := utils.Config.Blacklist.Words
+	if utils.ContainsBlacklistedWord(metadata.Title, bl) {
+		c.Error(blacklistedTitle)
+		return
+	}
+	if utils.ContainsBlacklistedWord(metadata.Description, bl) {
+		c.Error(blacklistedDescription)
+		return
 	}
 
 	// end validating
@@ -373,16 +371,14 @@ func UpdateRiceMetadata(c *gin.Context) {
 	}
 
 	// check against blacklisted words
-	for _, word := range utils.Config.Blacklist.Words {
-		if metadata.Title != nil && strings.Contains(strings.ToLower(*metadata.Title), word) {
-			c.Error(blacklistedTitle)
-			return
-		}
-
-		if metadata.Description != nil && strings.Contains(strings.ToLower(*metadata.Description), word) {
-			c.Error(blacklistedDescription)
-			return
-		}
+	bl := utils.Config.Blacklist.Words
+	if metadata.Title != nil && utils.ContainsBlacklistedWord(*metadata.Title, bl) {
+		c.Error(blacklistedTitle)
+		return
+	}
+	if metadata.Description != nil && utils.ContainsBlacklistedWord(*metadata.Description, bl) {
+		c.Error(blacklistedDescription)
+		return
 	}
 
 	rice, err := repository.UpdateRice(path.RiceID, metadata.Title, metadata.Description)
