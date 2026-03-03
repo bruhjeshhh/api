@@ -43,6 +43,14 @@ If you believe something can be implemented better, feel free to open an issue a
 
 Major architectural changes should be discussed first.
 
+## Contributing rices (content)
+
+The biggest way to support this project right now is by sharing your own rice on the website.
+
+If you use Linux or any Unix-like system, consider submitting your setup.
+
+More content makes the platform more useful and inspiring for others.
+
 ## Feature requests
 
 To request a feature open a new GitHub issue with details of how you want it to work, where should it be implemented, and other informations that might be useful.
